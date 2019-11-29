@@ -1,0 +1,98 @@
+4011	0001	密度电机编号	        density_motor_id            String	    BY20180521
+4011	0002	密度电机厂家	        motor_company               String	    佰源
+4011	0003	密度电机软件版本号	    density_sys_ver	            String	    v1.0
+4011	0004	密度电机系统更新时间	density_sys_updatetime	    DateTime	2018-10-12 08:40:00
+4011	0101	伺服电机编号	        servo_motor_id	            String	    BY20180522
+4011	0102	伺服电机厂家	        servo_motor_company	        String	    佰源
+4011	0103	伺服电机软件版本号   	servo_sys_ver	            String	    v1.0
+4011	0104	伺服电机系统更新时间	servo_sys_updatetime	    DateTime	2018-10-12 08:40:00
+4011	0201	送纱电机编号	        yarn_motor_id	            String	    BY20180520
+4011	0202	送纱电机厂家	        yarn_motor_company	        String	    佰源
+4011	0203	送纱电机软件版本号	    yarn_sys_ver	            String	    v1.0
+4011	0204	送纱电机系统更新时间	yarn_sys_updatetime	        DateTime	2018-10-12 08:40:00
+4012	0001	密度电机报警	        density_motor_alarm	        String	    0
+4012	0002	风门电机报警	        choke_valve_alarm	        String	    0
+4012	0003	伺服电机报警	        servo_alarm	                String	    0
+4012	0004	电机通讯异常	        motor_com_alarm	            String	    0
+4021	0001	选针器厂家	            sel_company	                String	    佰源
+4021	0002	选针器软件版本号	    sel_sys_ver	                String	    v1.0
+4021	0003	选针器系统更新时间	    sel_updatetime	            DateTime	2018-10-12 08:40:00
+4021	0004	选针刀数	            sel_lever_num	            UInt32	    12
+4021	0005	选针方向	            sel_direct	                String	    0
+4021	0006	选针顺序	            sel_turn	                Byte	    1
+4021	0101	选针角度1	            sel_angle2	                Float	    0
+4021	0102	选针角度2	            sel_angle3	                Float	    0
+4021	0103	选针角度3	            sel_angle4	                Float	    360
+4022	0001	起始刀号	            sel_startlever_num	        Byte	    0
+4022	0201	选针器1初始状态	    sel_init_state1	            Uint16	    0
+4022	0202	选针器2初始状态	    sel_init_state2	            Uint16	    0
+4022	0203	选针器3初始状态	    sel_init_state3	            Uint16	    0
+4022	0204	选针器4初始状态	    sel_init_state4	            Uint16	    0
+4023	0001	选针器通讯异常	        sel_com_alarm	            String	    1
+1001	0001	设备编号	            machine_id	                Int32	    BY20180021
+1001	0002	设备类型	            machine_type	            String	    BY
+1001	0007	选针刀数	            sel_lever_num	            UInt32	    12
+1001	0008	选针方向	            sel_direct	                String	    1
+1001	0009	选针顺序	            sel_turn	                Byte	    1
+1001	000a	选针角度	            sel_angle	                UInt16	    4.9315
+1001	0007	工位模式	            work_position_mode	        Byte	    2
+1002	0003	主控系统更新时间	    msys_updatetime	            DateTime	2018-11-12 13:28:00
+1003	0001	人机厂家	            ui_company	                String	    浙江理工
+1003	0003	人机系统更新时间	    ui_sys_updatetime	        DateTime	2018-11-12 13:28:00
+1004	0001	工厂	                factor_id	                Int32	    436
+2001	0001	控制状态	            control_state	            Byte	    1
+2001	0002	设备状态	            machine_state	            Byte	    1
+2001	0003	系统时间	            system_time	                DateTime	2018-11-12 13:28:00
+2002	0001	启动速度	            start_speed	                Int32	    35
+2002	0002	点动速度	            jog_speed	                Int32	    10
+2002	0003	关闭路数	            feed_close_num	            Int32	    0
+2002	0004	调速系数	            speed_control_system	    Byte	    0
+2002	0008	针位脉冲总数	        needle_pulse	            Int32	    26000
+2002	0009	零位脉冲	            zero_pulse	                Int32	    1
+2002	000a	上照布灯	            up_lamp	                    Boolean	    1
+2002	000b	下照布灯	            down_lamp	                Boolean	    1
+2002	000c	风扇	                fan	                        Boolean	    1
+2002	000d	油泵	                oil_pump	                Boolean	    1
+2002	000e	设定产量	            total_output	            Int32	    3000
+2004	0002	累计产量	            sum_output	                Int32	    19606
+2004	0003	当前脉冲值	            cur_pulse	                Int32	    13520
+2007	0001	班次编号	            shift_ID	                Int32	    1
+2007	0004	当前班次班时间	        shift_time	                UInt16	    2018-11-12 16:29:00
+2007	0005	当前班次生产时间	    produce_time	            Int32	    1080
+2007	0006	当前班次停车时间	    stop_time	                UInt16	    100 
+2007	0007	当前班次停车频率	    stop_freq	                Float	    9%
+2007	0008	班总停车次数	        stop_num	                UInt16	    86
+2007	0009	总停车时间	            total_stop_time	            UInt16	    536
+2007	000a	总运行时间	            total_run_time	            UInt16	    1439
+2007	000b	当前班次工作效率	    time_effic	                Float	    0.85
+2007	000c	工作效率	            work_effic	                Float	    0.85
+2007	000f	机修刷卡时间	        repair_card_time	        DateTime	2018-11-12 13:28:00
+2008	0001	订单编号	            order_id	                Int32	    2018110200018 
+2008	0002	产品编号	            art_no	                    Int32	    pd01
+2008	0001	工艺文件名	            pattern_file	            Srting	    PY002
+2008	0002	工艺花高	            pattern_height	            Int32	    100
+2007	0003	工艺花宽	            pattern_width	            Int32	    200
+2009	0001	文件名	                file_name	                Srting	    PY002
+2009	0002	类型	                file_type	                Srting	    CL02
+2009	0003	创建时间	            create_time	                DateTime	2018-11-11 08:29:00
+2009	0004	修改时间	            update_time	                DateTime	2018-11-11 10:29:00
+2009	0005	操作权限	            operating_authority	        Byte	    1
+2009	0006	作者	                file_author	                Srting	    PY
+2009	0007	版本号	                file_version	            Srting	    V1.0
+2009	0008	大小	                file_size	                Srting	    125
+2100	0001	低气压	                low_air_pressure	        UInt16	    0
+2100	0002	低油压	                low_oil_pressure	        UInt16	    0
+2100	0003	低油位	                low_oil_level	            UInt16	    0
+2100	0004	门报警	                door_alarm	                UInt16	    1
+2100	0005	设定产量生产完成	    product_plan_complete	    UInt16	    10000
+2100	0008	断针	                needle_broken_alarm	        UInt16	    2
+2100	0009	储纬器报警	            storage_feed_alarm	        UInt16	    16
+2100	000a	探针报警	            probe_alarm	                UInt16	    12
+2100	0015	机器超速	            mac_hypervelocity	        UInt16	    6
+2100	0016	变频器报警	            frequency_conversion 	    UInt16	    8
+2101	0001	纱嘴通讯异常	        yarnCarrier_com_alarm	    UInt16	    0
+2101	0002	气阀通讯异常	        valve_com_alarm	            UInt16	    0
+2101	0003	针筒零位编码	        cylinder_zeroCode_abnormal	UInt16	    225
+2101	0008	模块故障通信	        module_chat_error	        UInt16	    0
+3001	0001	参数订阅周期	        para_subs_period	        UInt32	    1
+3001	0002	协议版本信息	        protocol_version	        String	    V1.0
