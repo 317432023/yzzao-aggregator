@@ -136,6 +136,33 @@ public class StringUtil
     return value;
   }
  
+  
+  /**
+   * 字节数组转短整型
+   * @param bytes
+   * @param off
+   * @return
+   */
+  public static int byte2ToUnsignedShort(byte[] bytes, int off) {
+    int high = bytes[off];
+    int low = bytes[off + 1];
+    return (high << 8 & 0xFF00) | (low & 0xFF);
+  }
+
+
+  /**
+   * 短整形转字节数组2
+   * @param s
+   * @return
+   */
+  public static byte[] unsignedShortToByte2(int s) {
+    byte[] targets = new byte[2];
+    targets[0] = (byte) (s >> 8 & 0xFF);
+    targets[1] = (byte) (s & 0xFF);
+    return targets;
+  }
+  
+  
   public static byte[] merge(byte[] data1, byte[] data2)
   {
     byte[] data3 = new byte[data1.length + data2.length];

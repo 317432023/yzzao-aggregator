@@ -233,7 +233,7 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
         }
       } else if (recvMessage.getSubCd() == (byte) 0x05) {
         
-        if (recvMessage.getLength() == 19) {// 当前订单号对应的车间号（1个字节）+当前订单号对应的机器号（2个字节）+当前订单号（16个字节）
+        if (recvMessage.getLength() == 24) {// 当前订单号对应的车间号（1个字节）+当前订单号对应的机器号（2个字节）+当前订单号（16个字节）+手持车间号（1）+手持id（2）+包号（2）
           // 存储连接Bytes，连接信息转发MES
 
           byte[] par = recvMessage.getPar();
@@ -243,9 +243,16 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
           int workShopID = par[0] & 0xff;
           // 员工卡号
           byte[] orderBytes = new byte[16];
+          // 手持车间号
+          int barWorkShopID = par[19] & 0xff;
+          // 手持id
+          byte[] barmachineidBytes1 = new byte[]{par[20],par[21]};
+          // 包号
+          byte[] packIdBytes = new byte[]{par[22],par[23]};
           synchronized (this) {
             System.arraycopy(par, 3, orderBytes, 0, orderBytes.length);// 线程安全处理
           }
+          
           final String orderNo = new String(orderBytes);
           // 手持设备ID
           Integer barmachineid = null;
@@ -257,7 +264,16 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
                                                                       // << 8) +
                                                                       // barmachineidBytes[1]
                                                                       // & 0xff;
-
+            int barmachineid1 = ((barmachineidBytes1[1] & 0xff) << 8) + (barmachineidBytes1[2] & 0xff);
+            if(barmachineid1 != barmachineid) {
+              logger.warn("手持id前后不一致, 包中取得=" + barmachineid1 +",会话取得="+barmachineid);
+            }
+            int packId = ((packIdBytes[1] & 0xff) << 8) + (packIdBytes[2] & 0xff);//Integer.parseInt(new String(packIdBytes));
+            String msgid = new StringBuffer(32)
+              .append(barWorkShopID).append('-')
+              .append(barmachineid1).append('-')
+              .append(packId)
+              .toString();
             // 连接信息转发MES
             JSONObject jsonObj = new JSONObject();
             jsonObj.element("cd", "9005");
@@ -266,6 +282,7 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
             jsonObj.element("barmachineid", barmachineid == null ? null : barmachineid + "");
             jsonObj.element("machineid", machineID + "");
             jsonObj.element("barcode", orderNo);
+            jsonObj.element("msgid", msgid);
 
             final String text = jsonObj.toString();
             
@@ -278,10 +295,12 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
             // 放进写文件队列
             StringBuffer strBuf = new StringBuffer(256);
             strBuf.append(DateUtil.getDate(new Date(), DateUtil.CHN_LONG_FORMAT))
+              .append('\t').append("msgid:"+msgid)
               .append('\t').append("机台id:"+machineID)
               .append('\t').append("手持机id:"+barmachineid)
               .append('\t').append("员工No:"+barcodeCardNo.get(barmachineid))
               .append('\t').append("订单条码:"+orderNo);
+            
             mobileScanToFileQueue.add(strBuf.toString());
             
             

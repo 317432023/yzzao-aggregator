@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -246,12 +245,23 @@ public class WSClient {
             final String sessionId = "mobile_" + barmachineid;
             final int state = jsonObj.getInt("state");
             final String msg = jsonObj.getString("msg");
+            final String msgid = jsonObj.getString("msgid");
+            
+            String[] msgidArr = StringUtils.split(msgid, '-');
+            final int barWorkShopID = new Integer(msgidArr[0]);
+            final int barmachindid1 = new Integer(msgidArr[1]);
+            final int packId = new Integer(msgidArr[2]);
             
             service.execute(new Runnable() {
               @Override
               public void run() {
                 // 反馈接收结果
-                Message fb = new Message((byte) 0x80, (byte) 0x03, new byte[] { (byte) 0x90, (byte)0x05, (byte)state});
+                Message fb = new Message((byte) 0x80, (byte) 0x03, new byte[] { (byte) 0x90, (byte)0x05,
+                  (byte)state, 
+                  (byte)(barWorkShopID & 0xFF), 
+                  (byte) (barmachindid1 >> 8 & 0xFF), (byte) (barmachindid1 & 0xFF),
+                  (byte) (packId >> 8 & 0xFF), (byte) (packId & 0xFF) 
+                });
                 logger.info("[9005]转发[8003]给手持机反馈MES接收结果" + msg);
                 ChannelSession.sendMessage(sessionId, fb.composeFull());
               }
