@@ -271,6 +271,7 @@ public class WSClient {
             StringBuffer strBuf = new StringBuffer(256);
             
             strBuf.append(DateUtil.getDate(new Date(), DateUtil.CHN_LONG_FORMAT))
+              .append('\t').append("msgid:" + msgid)
               .append('\t').append("手持机id:" + barmachineid)
               .append('\t').append("员工No:" + barcodeCardNo.get(barmachineid))
               .append('\t').append("state:" + state)
