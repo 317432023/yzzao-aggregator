@@ -246,9 +246,9 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
           // 手持车间号
           int barWorkShopID = par[19] & 0xff;
           // 手持id
-          byte[] barmachineidBytes1 = new byte[]{par[20],par[21]};
+          byte[] barmachineidBytes1 = new byte[]{par[20], par[21]};
           // 包号
-          byte[] packIdBytes = new byte[]{par[22],par[23]};
+          byte[] packIdBytes = new byte[]{par[22], par[23]};
           synchronized (this) {
             System.arraycopy(par, 3, orderBytes, 0, orderBytes.length);// 线程安全处理
           }
@@ -264,11 +264,11 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
                                                                       // << 8) +
                                                                       // barmachineidBytes[1]
                                                                       // & 0xff;
-            int barmachineid1 = ((barmachineidBytes1[1] & 0xff) << 8) + (barmachineidBytes1[2] & 0xff);
+            int barmachineid1 = ((barmachineidBytes1[0] & 0xff) << 8) + (barmachineidBytes1[1] & 0xff);
             if(barmachineid1 != barmachineid) {
               logger.warn("手持id前后不一致, 包中取得=" + barmachineid1 +",会话取得="+barmachineid);
             }
-            int packId = ((packIdBytes[1] & 0xff) << 8) + (packIdBytes[2] & 0xff);//Integer.parseInt(new String(packIdBytes));
+            int packId = ((packIdBytes[0] & 0xff) << 8) + (packIdBytes[1] & 0xff);//Integer.parseInt(new String(packIdBytes));
             String msgid = new StringBuffer(32)
               .append(barWorkShopID).append('-')
               .append(barmachineid1).append('-')
