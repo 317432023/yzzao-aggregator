@@ -45,6 +45,9 @@ public class QueueWithThreadPool {
   /** 手持机-员工 map*/
   private final Map<Integer, String> barcodeCardNo = new ConcurrentHashMap<>(64);
   
+  /** 机台-crc 映射*/
+  private final Map<Integer, Short> machineCrcMap = new ConcurrentHashMap<>(256);
+  
   @SuppressWarnings("rawtypes")
   private volatile Map lock = new HashMap();
 
@@ -56,7 +59,7 @@ public class QueueWithThreadPool {
 
   public void start() throws Exception {
 
-    new MidServer(storage, mobileScanToFileQueue, barcodeCardNo).bind();
+    new MidServer(storage, mobileScanToFileQueue, barcodeCardNo, machineCrcMap).bind();
 
     // 启动转发下位机转数线程
     for (int i = 0; i < Constants.transThreadsCountV2; i++) {

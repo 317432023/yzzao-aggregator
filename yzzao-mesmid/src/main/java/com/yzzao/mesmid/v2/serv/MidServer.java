@@ -14,6 +14,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.sf.json.JSONObject;
@@ -31,11 +32,13 @@ public class MidServer {
   private final BlockingQueue<JSONObject> storage;
   private final ConcurrentLinkedQueue<String> mobileScanToFileQueue;
   private final Map<Integer, String> barcodeCardNo;
-
-  public MidServer(BlockingQueue<JSONObject> storage, /*Map<String, Long> lastPacktimeMap,*/ ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo) {
+  /** 机台-crc 映射*/
+  private final Map<Integer, Short> machineCrcMap;
+  public MidServer(BlockingQueue<JSONObject> storage, /*Map<String, Long> lastPacktimeMap,*/ ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo,  Map<Integer, Short> machineCrcMap) {
     this.storage = storage;
     this.mobileScanToFileQueue = mobileScanToFileQueue;
     this.barcodeCardNo = barcodeCardNo;
+    this.machineCrcMap = machineCrcMap;
   }
 
   public void bind() throws Exception {
@@ -52,7 +55,7 @@ public class MidServer {
             ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(15, 0, 0));// 15秒没读取到,
                                                                                       // 认为超时触发一次心跳
             ch.pipeline().addLast("handshakeHandler", new HandshakeHandler(mobileScanToFileQueue, barcodeCardNo));// 握手指令,可以认为是心跳检测
-            ch.pipeline().addLast("perioddatapacketHandler", new PerioddatapacketHandler(storage));// 接收周期性二代长数据包
+            ch.pipeline().addLast("perioddatapacketHandler", new PerioddatapacketHandler(storage, machineCrcMap));// 接收周期性二代长数据包
             ch.pipeline().addLast("cmdHandler", new CmdHandler());
 
           }

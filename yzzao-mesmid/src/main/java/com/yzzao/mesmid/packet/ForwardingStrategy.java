@@ -89,5 +89,4 @@ public final class ForwardingStrategy {
   public static void warnDropPackMsg( final String logMsg ) {
     logger.warn(logMsg); 
   }
-  
 }
