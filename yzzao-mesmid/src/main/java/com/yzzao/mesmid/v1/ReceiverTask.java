@@ -50,7 +50,9 @@ public class ReceiverTask implements Runnable {
 			byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
 
 			if(logger.isDebugEnabled()) {
-				logger.debug("byte length -> " + data.length + ", socket addr -> " + packet.getSocketAddress());
+				//logger.debug("byte length -> " + data.length + ", socket addr -> " + packet.getSocketAddress());
+        String packetToString = StringUtil.bytesToHex(data);
+        logger.debug("Recv Packet=> " + packetToString);
 			}
 			
 			
@@ -70,7 +72,7 @@ public class ReceiverTask implements Runnable {
 				if( plen < PACK_MIN ) break;
 				
 				if( ( data.length - pindex ) < plen ) {
-					logger.error("解包失败，下标 -> " + pindex + " ，字节数组 -> " + StringUtil.bytesToHex(data));
+					logger.error("忽略数据包，原因解包失败，下标 -> " + pindex);
 					break;
 				}
 				
@@ -151,7 +153,7 @@ public class ReceiverTask implements Runnable {
 	private JSONObject convertBytes2JSONObject(byte[] fd) {
 		
 		if(fd.length < PACK_MIN) {
-			logger.error("采集到的字节码长度不足.");
+			logger.error("采集到的字节码长度不足.忽略此包");
 			return null;
 		}
 		

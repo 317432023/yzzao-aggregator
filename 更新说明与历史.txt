@@ -1,3 +1,12 @@
+2019-12-24
+  1 增加一代机接收包日志，写入  mesmidv1.log
+      
+    若要开启接收包日志，log4j.properties 这一行 把 INFO 改成 DEBUG，然后重启
+
+    log4j.logger.com.yzzao.mesmid.v1=INFO,mesmidv1
+
+  2 手持机扫码消息id，格式对应改为   barmachineId-packetId   MES接收此消息id若要解析请对应修改，联测。
+
 2019-12-07
   1、CRC重复切断机台连接
 
