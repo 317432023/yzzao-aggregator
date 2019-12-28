@@ -1,0 +1,78 @@
+
+
+0 安装JDK
+
+# 查看是否已经安装的JDK
+rpm -qa|grep jdk
+
+或 java -version
+
+# 若没有安装JDK，下载 JDK 并安装
+# 先查看操作系统平台为32还是64位
+uname -r
+
+# 64 位
+wget http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm
+rpm -ivh jdk-8u144-linux-x64.rpm
+
+# 32位
+wget http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-i586.rpm
+rpm -ivh jdk-8u144-linux-i586.rpm
+
+# 上传mesmid.zip 到 /usr/local 目录下
+
+cd /usr/local
+
+rz -y
+
+选择 mesmid.zip
+
+unzip mesmid.zip
+
+cd mesmid
+
+chmod a+x start.sh
+
+
+# 修改mesmid/conf/app.properties 设置APPID, REQ_URL
+
+vi /usr/local/mesmid/conf/app.properties
+
+
+# 试运行
+
+sh start.sh
+
+# 查看式运行结果
+
+tail -f ../logs/yzzao-client.log
+
+
+# 停止试运行的 mesmid
+ps -ef|grep java | grep -v grep
+
+kill -9 进程号
+
+
+# 设置开机执行sh start.sh
+
+# centos7 先执行下面两个命令 
+systemctl enable rc-local.service 	#for centos 7
+chmod a+x /etc/rc.d/rc.local 		#for centos 7
+
+vi /etc/rc.local
+
+加入一行 sh /usr/local/mesmid/start.sh 保存后退出后重启机器执行 ps -ef|grep java | grep client 查看设置效果
+
+
+
+关于程序分配内存修改
+
+start.sh 
+-Xms512m -Xmx512m
+改为想要的大小，单位m，一般128-512
+改完 kill -9 进程号 重启 start.sh 
+
+
+
+

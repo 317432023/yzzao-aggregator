@@ -1,0 +1,26 @@
+适配环境 WINDOWS 32/64位机 XP / WIN7 / WIN8
+
+0】环境安装&修改工厂参数&程序试运行
+
+0.1、双击jre-8u144-windows-i586 按默认安装完成走完。(本机已安装jre8或jdk8以上可以不安装)
+
+0.2、拷贝 mesmid 到 D盘，进入 D:\mesmid\conf按需要修改app.properties文件属性，改完后保存。
+
+0.3、试运行：进入 D:\mesmid\bin 双击 App.bat 试运行，若 运行成功，../logs/yzzao-mesmid.log显示 “采集数据线程队列启动...”表示程序与环境可用。然后按CTRL+C按照提示 ，或直接关闭该启动的控制台程序。
+
+
+1】安装成系统服务（可选）
+
+1.1、在关闭App.bat的情况下，进入 D:\mesmid\bin，双击InstallApp-NT.bat 自动安装该程序为系统服务，服务名为mesmid ；点开始菜单运行 services.msc 找到 mesmid 这个服务，右键点击启动。
+
+1.2、查看D:\mesmid\logs目录下的启动日志和程序运行日志
+
+1.3、日志目录结构
+mesmid
+ |- logs
+ 	|- v1	#应用日志1
+        |- v2	#应用日志2
+        |- packet	#应用日志-数据包
+	|- wrapper.log 	#控制台日志
+	|- root.log
+
