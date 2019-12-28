@@ -248,9 +248,8 @@ public class WSClient {
             final String msgid = jsonObj.getString("msgid");
             
             String[] msgidArr = StringUtils.split(msgid, '-');
-            final int barWorkShopID = new Integer(msgidArr[0]);
-            final int barmachindid1 = new Integer(msgidArr[1]);
-            final int packId = new Integer(msgidArr[2]);
+            final int barmachindid1 = new Integer(msgidArr[0]);
+            final int packId = new Integer(msgidArr[1]);
             
             service.execute(new Runnable() {
               @Override
@@ -258,9 +257,8 @@ public class WSClient {
                 // 反馈接收结果
                 Message fb = new Message((byte) 0x80, (byte) 0x03, new byte[] { (byte) 0x90, (byte)0x05,
                   (byte)state, 
-                  (byte)(barWorkShopID & 0xFF), 
-                  (byte) (barmachindid1 >> 8 & 0xFF), (byte) (barmachindid1 & 0xFF),
-                  (byte) (packId >> 8 & 0xFF), (byte) (packId & 0xFF) 
+                  (byte)(barmachindid1 & 0xFF), 
+                  (byte) (packId >> 24 & 0xFF), (byte)(packId >> 16 & 0xFF), (byte) (packId >> 8 & 0xFF), (byte) (packId & 0xFF) 
                 });
                 logger.info("[9005]转发[8003]给手持机反馈MES接收结果" + msg);
                 ChannelSession.sendMessage(sessionId, fb.composeFull());
@@ -291,7 +289,7 @@ public class WSClient {
 
       @Override
       public void onError(Exception ex) {
-        logger.error("发生错误已关闭:" + ex.getMessage());
+        logger.error("发生错误已关闭:" + ex.getMessage(), ex);
       }
 
       @Override
