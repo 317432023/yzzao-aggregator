@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,9 +12,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.yzzao.mesmid.ws.WebClientEnum;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.yzzao.common.utils.DateUtil;
@@ -77,8 +76,52 @@ public class QueueWithThreadPool {
       @Override
       public void run() {
         wscli = new WSClient(lock, Constants.WS_ADDR, mesFeedbackScanToFileQueue, barcodeCardNo);
-        wscli.connect();
+
+        // 新的连接(相对于wscli.connect()方法)
+        wscli.initClient();
+        // 自动检测与重连
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            try{
+              wscli.send("test connection");
+            }catch(Exception e){
+              ArrayBlockingQueue<String> queue = WSClient.getStorage();
+              logger.info("检测到连接已经失效或断开，待发送队列="+ queue.size()+"/"+100);
+              wscli.getClient().close();
+              wscli.initClient();
+            }
+          }
+        }, new Date(), Constants.WS_RECONNECT_INTERVAL);// 心跳间隔
+
+        // 线程内死循环发送手持机队列消息
+        new Thread(new Runnable(){
+          @Override
+          public void run() {
+            ArrayBlockingQueue<String> queue = WSClient.getStorage();
+            while (wscli.getClient().isOpen() && queue.size() > 0) {
+              final String text = queue.peek();
+              if (StringUtils.isBlank(text) || wscli.send(text) ) {
+                // 发送成功移除
+                queue.poll();
+                logger.info("重新发送ws消息成功，当前重发队列占用" + queue.size() + "/100，已发送消息内容-->" + text);
+
+                try {
+                  Thread.sleep(50L);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+
+              } else {
+                logger.error("重新发送ws消息失败，下次检测将重新发送 -->" + text);
+              }
+            }
+          }
+        }).start();
+
       }
+
     });
     
     // 启动写文件9005线程
@@ -185,6 +228,22 @@ public class QueueWithThreadPool {
       
     }//end while
     
+  }
+
+  public static void main(String[] args) {
+    final Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        System.out.println("ok");
+        //this.cancel();
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    },new Date(), 1000);// 5秒
   }
   
 }
