@@ -140,8 +140,11 @@ public class MainApp {
         
         int threads = Integer.parseInt(prop.getProperty("transThreadsCountV2"));
         Constants.transThreadsCountV2 = threads<=0? (int)Math.ceil( Constants.totalMachine*Constants.avgPostCost/ (1000*Constants.packageFrequency) ) : threads;
-        
+
         Constants.scanFilePath = prop.getProperty("scanFilePath");
+
+        Constants.SCAN_TRANS_MODE = Integer.parseInt(prop.getProperty("REQ_SCAN_URL"));
+        Constants.REQ_SCAN_URL = prop.getProperty("REQ_SCAN_URL");
         
         logger.debug(Constants.REQ_URL_V2);
         logger.debug(Constants.ServIP);

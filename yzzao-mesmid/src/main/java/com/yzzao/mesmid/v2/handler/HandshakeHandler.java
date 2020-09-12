@@ -1,5 +1,7 @@
 package com.yzzao.mesmid.v2.handler;
 
+import com.yzzao.common.utils.HttpUtil;
+import com.yzzao.mesmid.v2.BarWebSocketClient;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -35,10 +37,13 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
   
   private final ConcurrentLinkedQueue<String> mobileScanToFileQueue;
   private final Map<Integer, String> barcodeCardNo;
+
+  private ConcurrentLinkedQueue<String> mesFeedbackScanToFileQueue;
   
-  public HandshakeHandler(ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo) {
+  public HandshakeHandler(ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo, ConcurrentLinkedQueue<String> mesFeedbackScanToFileQueue) {
     this.mobileScanToFileQueue = mobileScanToFileQueue;
     this.barcodeCardNo = barcodeCardNo;
+    this.mesFeedbackScanToFileQueue = mesFeedbackScanToFileQueue;
   }
   
   private void addUserOvertime(ChannelHandlerContext ctx, Map<ChannelHandlerContext, Integer> overtimeMap) {
@@ -287,9 +292,25 @@ public class HandshakeHandler extends ChannelInboundHandlerAdapter {
             final String text = jsonObj.toString();
             
             logger.info("[9005]手持机扫码转发MES - > " + text);
-            
-            if (!MainApp.getQwp().getWscli().send(text)) {
-              WSClient.add(text);
+
+            if(Constants.SCAN_TRANS_MODE == 1) { // Socket 转发扫码信息
+              boolean sendResult = MainApp.getQwp().getWscli().send(text);
+              if (!sendResult) {
+                WSClient.add(text);
+              }
+            }else { // Post 转发扫码信息
+              final String mayJson = HttpUtil.post("http://mes.yzzao.com/XPAdmin-First/ControlMethod-OpenAPI-YZZMES-upDayBarCode.html", jsonObj);
+              JSONObject jsonObj2 = null;
+              try {
+                jsonObj2 = JSONObject.fromObject(mayJson);
+              }catch(Exception e) {
+                logger.error("扫码post转发异常 =>" + mayJson);
+              }
+              if(jsonObj2 != null) {
+
+                BarWebSocketClient.process9005(jsonObj2, barcodeCardNo, mesFeedbackScanToFileQueue);
+              }
+
             }
 
             // 放进写文件队列

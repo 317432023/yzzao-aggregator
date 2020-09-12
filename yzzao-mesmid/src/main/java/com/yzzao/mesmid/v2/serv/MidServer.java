@@ -34,11 +34,13 @@ public class MidServer {
   private final Map<Integer, String> barcodeCardNo;
   /** 机台-crc 映射*/
   private final Map<Integer, Short> machineCrcMap;
-  public MidServer(BlockingQueue<JSONObject> storage, /*Map<String, Long> lastPacktimeMap,*/ ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo,  Map<Integer, Short> machineCrcMap) {
+  private final ConcurrentLinkedQueue<String> mesFeedbackScanToFileQueue;
+  public MidServer(BlockingQueue<JSONObject> storage, /*Map<String, Long> lastPacktimeMap,*/ ConcurrentLinkedQueue<String> mobileScanToFileQueue, Map<Integer, String> barcodeCardNo,  Map<Integer, Short> machineCrcMap, ConcurrentLinkedQueue<String> mesFeedbackScanToFileQueue) {
     this.storage = storage;
     this.mobileScanToFileQueue = mobileScanToFileQueue;
     this.barcodeCardNo = barcodeCardNo;
     this.machineCrcMap = machineCrcMap;
+    this.mesFeedbackScanToFileQueue = mesFeedbackScanToFileQueue;
   }
 
   public void bind() throws Exception {
@@ -54,7 +56,7 @@ public class MidServer {
             ch.pipeline().addLast("messageEecoder", new MessageEncoder());
             ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(15, 0, 0));// 15秒没读取到,
                                                                                       // 认为超时触发一次心跳
-            ch.pipeline().addLast("handshakeHandler", new HandshakeHandler(mobileScanToFileQueue, barcodeCardNo));// 握手指令,可以认为是心跳检测
+            ch.pipeline().addLast("handshakeHandler", new HandshakeHandler(mobileScanToFileQueue, barcodeCardNo, mesFeedbackScanToFileQueue));// 握手指令,可以认为是心跳检测
             ch.pipeline().addLast("perioddatapacketHandler", new PerioddatapacketHandler(storage, machineCrcMap));// 接收周期性二代长数据包
             ch.pipeline().addLast("cmdHandler", new CmdHandler());
 

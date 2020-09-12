@@ -58,7 +58,7 @@ public class QueueWithThreadPool {
 
   public void start() throws Exception {
 
-    new MidServer(storage, mobileScanToFileQueue, barcodeCardNo, machineCrcMap).bind();
+    new MidServer(storage, mobileScanToFileQueue, barcodeCardNo, machineCrcMap, mesFeedbackScanToFileQueue).bind();
 
     // 启动转发下位机转数线程
     for (int i = 0; i < Constants.transThreadsCountV2; i++) {
@@ -85,7 +85,12 @@ public class QueueWithThreadPool {
           @Override
           public void run() {
             try{
-              wscli.send("test connection");
+              JSONObject jsonObject = new JSONObject();
+              jsonObject.put("APPID", Constants.APPID);
+              jsonObject.put("cd", "9006");
+              //jsonObject.put("barmachineid", Constants.APPID);
+              jsonObject.put("msgid", ComSeqNoCounter.getAndIncrement());
+              wscli.send(jsonObject.toString());
             }catch(Exception e){
               ArrayBlockingQueue<String> queue = WSClient.getStorage();
               logger.info("检测到连接已经失效或断开，待发送队列="+ queue.size()+"/"+100);

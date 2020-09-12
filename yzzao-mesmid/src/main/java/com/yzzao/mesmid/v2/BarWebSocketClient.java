@@ -76,7 +76,7 @@ public class BarWebSocketClient extends WebSocketClient {
         try {
           msglstMap = Mesmid2ndUtils.jsonStr2Message(mayJson);
         } catch (UnsupportedEncodingException ex) {
-          logger.error("error occured -> " + ex.getMessage());
+          logger.error("error occurred -> " + ex.getMessage());
         }
         if (msglstMap == null) {
           logger.error("WS消息解析失败");
@@ -212,15 +212,26 @@ public class BarWebSocketClient extends WebSocketClient {
 
       }else if("9005".equals(cd)) {
 
-        final String barmachineid = jsonObj.getString("barmachineid");
-        final String sessionId = "mobile_" + barmachineid;
-        final int state = jsonObj.getInt("state");
-        final String msg = jsonObj.getString("msg");
-        final String msgid = jsonObj.getString("msgid");
+        process9005( jsonObj, barcodeCardNo, mesFeedbackScanToFileQueue);
 
-        String[] msgidArr = StringUtils.split(msgid, '-');
-        final int barmachindid1 = new Integer(msgidArr[0]);
-        final int packId = new Integer(msgidArr[1]);
+      }else if("9006".equals(cd)){
+        logger.debug("收到 MES 心跳反馈-> " + mayJson);
+      }
+
+    }
+
+  }
+
+  public static void process9005(JSONObject jsonObj, Map<Integer, String> barcodeCardNo, ConcurrentLinkedQueue<String> mesFeedbackScanToFileQueue) {
+    final String barmachineid = jsonObj.getString("barmachineid");
+    final String sessionId = "mobile_" + barmachineid;
+    final int state = jsonObj.getInt("state");
+    final String msg = jsonObj.getString("msg");
+    final String msgid = jsonObj.getString("msgid");
+
+    String[] msgidArr = StringUtils.split(msgid, '-');
+    final int barmachindid1 = new Integer(msgidArr[0]);
+    final int packId = new Integer(msgidArr[1]);
 
             /*service.execute(new Runnable() {
               @Override
@@ -236,21 +247,17 @@ public class BarWebSocketClient extends WebSocketClient {
               }
             });*/
 
-        // 放进写文件队列
-        StringBuffer strBuf = new StringBuffer(256);
+    // 放进写文件队列
+    StringBuffer strBuf = new StringBuffer(256);
 
-        strBuf.append(DateUtil.getDate(new Date(), DateUtil.CHN_LONG_FORMAT))
-          .append('\t').append("msgid:" + msgid)
-          .append('\t').append("手持机id:" + barmachineid)
-          .append('\t').append("员工No:" + barcodeCardNo.get(barmachineid))
-          .append('\t').append("state:" + state)
-          .append('\t').append("msg:" + msg);
+    strBuf.append(DateUtil.getDate(new Date(), DateUtil.CHN_LONG_FORMAT))
+      .append('\t').append("msgid:" + msgid)
+      .append('\t').append("手持机id:" + barmachineid)
+      .append('\t').append("员工No:" + barcodeCardNo.get(barmachineid))
+      .append('\t').append("state:" + state)
+      .append('\t').append("msg:" + msg);
 
-        mesFeedbackScanToFileQueue.add(strBuf.toString());
-      }
-
-    }
-
+    mesFeedbackScanToFileQueue.add(strBuf.toString());
   }
 
   @Override

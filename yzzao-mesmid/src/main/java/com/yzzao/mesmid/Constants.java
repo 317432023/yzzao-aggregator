@@ -51,5 +51,10 @@ public class Constants {
     
     /** 扫描文件路径*/
     public static String scanFilePath = null;
-    
+
+    /** 中间层转发手持机扫码 方式 0-Post,1-WebSocket*/
+    public static int SCAN_TRANS_MODE;
+
+    /** 中间层post转发手持机扫码地址*/
+    public static String REQ_SCAN_URL;
 }
